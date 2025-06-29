@@ -5,15 +5,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useData } from '@/contexts/DataContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Bell, 
-  LogOut, 
-  Menu, 
-  X, 
-  Home, 
-  Anchor, 
-  Settings, 
-  Wrench, 
+import {
+  Bell,
+  LogOut,
+  Menu,
+  X,
+  Home,
+  Anchor,
+  Settings,
+  Wrench,
   Calendar,
   User
 } from 'lucide-react';
@@ -36,7 +36,7 @@ const Layout = () => {
     { name: 'Calendar', href: '/calendar', icon: Calendar, roles: ['Admin', 'Inspector', 'Engineer'] },
   ];
 
-  const filteredNavigation = navigation.filter(item => 
+  const filteredNavigation = navigation.filter(item =>
     item.roles.includes(user?.role || '')
   );
 
@@ -49,7 +49,7 @@ const Layout = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
       {/* Mobile sidebar backdrop */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -78,16 +78,15 @@ const Layout = () => {
           {filteredNavigation.map((item) => {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
-            
+
             return (
               <Link
                 key={item.name}
                 to={item.href}
-                className={`flex items-center px-3 py-2 mb-1 text-sm font-medium rounded-lg transition-colors ${
-                  isActive
+                className={`flex items-center px-3 py-2 mb-1 text-sm font-medium rounded-lg transition-colors ${isActive
                     ? 'bg-primary text-primary-foreground'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
                 onClick={() => setSidebarOpen(false)}
               >
                 <Icon className="w-5 h-5 mr-3" />
@@ -158,9 +157,8 @@ const Layout = () => {
                         notifications.slice(0, 5).map((notification) => (
                           <div
                             key={notification.id}
-                            className={`p-4 border-b border-gray-100 hover:bg-gray-50 ${
-                              !notification.read ? 'bg-blue-50' : ''
-                            }`}
+                            className={`p-4 border-b border-gray-100 hover:bg-gray-50 ${!notification.read ? 'bg-blue-50' : ''
+                              }`}
                           >
                             <p className="font-medium text-sm">{notification.title}</p>
                             <p className="text-xs text-gray-600 mt-1">{notification.message}</p>
