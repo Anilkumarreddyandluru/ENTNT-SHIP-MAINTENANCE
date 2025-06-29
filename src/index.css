@@ -1,0 +1,115 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 98%;
+    --foreground: 215 28% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+
+    --primary: 210 100% 40%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 215 28% 17%;
+
+    --muted: 210 40% 95%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 195 100% 50%;
+    --accent-foreground: 215 28% 17%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 210 100% 40%;
+
+    --radius: 0.5rem;
+
+    --maritime-blue: 210 100% 40%;
+    --ocean-blue: 195 100% 50%;
+    --navy-blue: 215 28% 17%;
+    --sea-foam: 165 70% 70%;
+    --warning-orange: 30 100% 60%;
+  }
+
+  .dark {
+    --background: 215 28% 8%;
+    --foreground: 210 40% 98%;
+
+    --card: 215 28% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 215 28% 10%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 100% 50%;
+    --primary-foreground: 215 28% 8%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 195 100% 60%;
+    --accent-foreground: 215 28% 8%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 210 100% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+}
+
+/* Custom maritime animations */
+@keyframes wave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(3deg); }
+  75% { transform: rotate(-3deg); }
+}
+
+.wave-animation {
+  animation: wave 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+.float-animation {
+  animation: float 6s ease-in-out infinite;
+}
+
+.gradient-maritime {
+  background: linear-gradient(135deg, hsl(var(--maritime-blue)) 0%, hsl(var(--ocean-blue)) 100%);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--maritime-blue)), hsl(var(--ocean-blue)));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
