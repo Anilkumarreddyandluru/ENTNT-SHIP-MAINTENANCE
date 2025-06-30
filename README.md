@@ -46,6 +46,7 @@ src/
 │   ├── Login.tsx      # Authentication page
 │   ├── Dashboard.tsx  # KPI dashboard
 │   ├── Ships.tsx      # Fleet management
+    |__Components.tsx  #all components
 │   └── [other pages]
 ├── hooks/             # Custom React hooks
 ├── lib/               # Utility functions
@@ -185,8 +186,8 @@ The application includes comprehensive error handling:
 ## 📦 Deployment
 
 The application is configured for easy deployment to:
-- **Vercel** (recommended)
-- **Netlify**
+- **Vercel** 
+- **Netlify**(recommended)
 - **GitHub Pages**
 
 ### Deployment Commands

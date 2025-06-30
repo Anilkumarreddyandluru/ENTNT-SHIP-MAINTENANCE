@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Anchor, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Ship } from "lucide-react";
 import { toast } from 'sonner';
 
 const Login = () => {
@@ -52,10 +53,10 @@ const Login = () => {
         {/* Logo and Title */}
         <div className="text-center">
           <div className="mx-auto w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 float-animation">
-            <Anchor className="w-8 h-8 text-blue-600" />
-          </div>
+  <Ship className="w-8 h-8 text-blue-600" />
+</div>
           <h1 className="text-3xl font-bold text-white mb-2">Ship Maintenance</h1>
-          <p className="text-blue-100">ENTNT Maritime Systems</p>
+          <p className="text-blue-100">ENTNT Marinetime Systems</p>
         </div>
 
         {/* Login Form */}
@@ -127,7 +128,7 @@ const Login = () => {
         </Card>
 
         <div className="text-center text-blue-100 text-sm">
-          <p>&copy; 2024 ENTNT Maritime Systems. All rights reserved.</p>
+          <p>&copy; 2024 ENTNT Marinetime Systems. All rights reserved.</p>
         </div>
       </div>
     </div>
