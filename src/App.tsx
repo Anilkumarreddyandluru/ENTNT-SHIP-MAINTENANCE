@@ -8,10 +8,13 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { DataProvider } from "./contexts/DataContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
+import Jobs from "./pages/Jobs";
+import Components from "./pages/Components";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Ships from "./pages/Ships";
 import NotFound from "./pages/NotFound";
+import Calendar from "./pages/Calender";
 
 const queryClient = new QueryClient();
 
@@ -32,28 +35,23 @@ const App = () => (
               }>
                 <Route index element={<Dashboard />} />
                 <Route path="ships" element={<Ships />} />
-                <Route path="components" element={
-                  <ProtectedRoute allowedRoles={['Admin', 'Engineer']}>
-                    <div className="p-8 text-center">
-                      <h1 className="text-2xl font-bold">Components Management</h1>
-                      <p className="text-gray-600 mt-2">Components page coming soon...</p>
-                    </div>
-                  </ProtectedRoute>
-                } />
-                <Route path="jobs" element={
-                  <ProtectedRoute allowedRoles={['Admin', 'Engineer']}>
-                    <div className="p-8 text-center">
-                      <h1 className="text-2xl font-bold">Jobs Management</h1>
-                      <p className="text-gray-600 mt-2">Jobs page coming soon...</p>
-                    </div>
-                  </ProtectedRoute>
-                } />
-                <Route path="calendar" element={
-                  <div className="p-8 text-center">
-                    <h1 className="text-2xl font-bold">Maintenance Calendar</h1>
-                    <p className="text-gray-600 mt-2">Calendar page coming soon...</p>
-                  </div>
-                } />
+                <Route
+                  path="components"
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Engineer']}>
+                      <Components />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="jobs"
+                  element={
+                    <ProtectedRoute allowedRoles={['Admin', 'Engineer']}>
+                      <Jobs />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="calendar" element={<Calendar />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
