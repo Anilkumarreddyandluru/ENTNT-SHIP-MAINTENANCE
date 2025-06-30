@@ -1,9 +1,17 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Plus, AlertTriangle, CheckCircle, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Settings, Plus, AlertTriangle, CheckCircle, Clock, Trash2, Edit, Eye } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const Components = () => {
-  const components = [
+  const { toast } = useToast();
+  const [components, setComponents] = useState([
     {
       id: 1,
       name: "Main Engine",
@@ -44,7 +52,23 @@ const Components = () => {
       nextInspection: "2024-06-25",
       health: 45,
     },
-  ];
+  ]);
+
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [newComponent, setNewComponent] = useState({
+    name: "",
+    ship: "",
+    type: "",
+    status: "Good",
+    health: 100,
+  });
+
+  const ships = ["MV Ocean Explorer", "SS Atlantic", "MV Pacific Star"];
+  const componentTypes = ["Engine", "Electronics", "Structure", "Propulsion", "Safety"];
+  const statusOptions = ["Good", "Maintenance Required", "Critical"];
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -72,6 +96,71 @@ const Components = () => {
     }
   };
 
+  const handleAddComponent = () => {
+    if (!newComponent.name || !newComponent.ship || !newComponent.type) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const component = {
+      ...newComponent,
+      id: Math.max(...components.map(c => c.id)) + 1,
+      lastInspection: new Date().toISOString().split('T')[0],
+      nextInspection: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+    };
+
+    setComponents([...components, component]);
+    setNewComponent({ name: "", ship: "", type: "", status: "Good", health: 100 });
+    setIsAddDialogOpen(false);
+    
+    toast({
+      title: "Success",
+      description: "Component added successfully",
+    });
+  };
+
+  const handleEditComponent = (component) => {
+    setSelectedComponent(component);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleUpdateComponent = () => {
+    setComponents(components.map(c => 
+      c.id === selectedComponent.id ? selectedComponent : c
+    ));
+    setIsEditDialogOpen(false);
+    setSelectedComponent(null);
+    
+    toast({
+      title: "Success",
+      description: "Component updated successfully",
+    });
+  };
+
+  const handleDeleteComponent = (id) => {
+    setComponents(components.filter(c => c.id !== id));
+    toast({
+      title: "Success",
+      description: "Component deleted successfully",
+    });
+  };
+
+  const handleViewComponent = (component) => {
+    setSelectedComponent(component);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleScheduleService = (component) => {
+    toast({
+      title: "Service Scheduled",
+      description: `Service scheduled for ${component.name}`,
+    });
+  };
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -79,10 +168,71 @@ const Components = () => {
           <h1 className="text-2xl font-bold text-gray-900">Components Management</h1>
           <p className="text-gray-600">Monitor and manage ship components</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Plus className="h-4 w-4 mr-2" />
-          Add Component
-        </Button>
+        
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Component
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Component</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Component Name</Label>
+                <Input
+                  id="name"
+                  value={newComponent.name}
+                  onChange={(e) => setNewComponent({...newComponent, name: e.target.value})}
+                  placeholder="Enter component name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="ship">Ship</Label>
+                <Select value={newComponent.ship} onValueChange={(value) => setNewComponent({...newComponent, ship: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select ship" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {ships.map(ship => (
+                      <SelectItem key={ship} value={ship}>{ship}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="type">Type</Label>
+                <Select value={newComponent.type} onValueChange={(value) => setNewComponent({...newComponent, type: value})}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {componentTypes.map(type => (
+                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="health">Health (%)</Label>
+                <Input
+                  id="health"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={newComponent.health}
+                  onChange={(e) => setNewComponent({...newComponent, health: parseInt(e.target.value)})}
+                />
+              </div>
+              <Button onClick={handleAddComponent} className="w-full">
+                Add Component
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Status Summary */}
@@ -94,7 +244,9 @@ const Components = () => {
                 <CheckCircle className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">2</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {components.filter(c => c.status === 'Good').length}
+                </p>
                 <p className="text-sm text-gray-600">Good Condition</p>
               </div>
             </div>
@@ -108,7 +260,9 @@ const Components = () => {
                 <Clock className="h-6 w-6 text-orange-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">1</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {components.filter(c => c.status === 'Maintenance Required').length}
+                </p>
                 <p className="text-sm text-gray-600">Needs Maintenance</p>
               </div>
             </div>
@@ -122,7 +276,9 @@ const Components = () => {
                 <AlertTriangle className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">1</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {components.filter(c => c.status === 'Critical').length}
+                </p>
                 <p className="text-sm text-gray-600">Critical Issues</p>
               </div>
             </div>
@@ -183,18 +339,134 @@ const Components = () => {
                 </div>
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <Button variant="outline" size="sm" className="flex-1">
-                  View History
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleViewComponent(component)}
+                >
+                  <Eye className="h-4 w-4 mr-1" />
+                  View
                 </Button>
-                <Button size="sm" className="flex-1 bg-blue-600 hover:bg-blue-700">
+                <Button 
+                  size="sm" 
+                  className="bg-blue-600 hover:bg-blue-700"
+                  onClick={() => handleScheduleService(component)}
+                >
                   Schedule Service
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleEditComponent(component)}
+                >
+                  <Edit className="h-4 w-4 mr-1" />
+                  Edit
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleDeleteComponent(component.id)}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Delete
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Component</DialogTitle>
+          </DialogHeader>
+          {selectedComponent && (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="edit-name">Component Name</Label>
+                <Input
+                  id="edit-name"
+                  value={selectedComponent.name}
+                  onChange={(e) => setSelectedComponent({...selectedComponent, name: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-health">Health (%)</Label>
+                <Input
+                  id="edit-health"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={selectedComponent.health}
+                  onChange={(e) => setSelectedComponent({...selectedComponent, health: parseInt(e.target.value)})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-status">Status</Label>
+                <Select 
+                  value={selectedComponent.status} 
+                  onValueChange={(value) => setSelectedComponent({...selectedComponent, status: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map(status => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button onClick={handleUpdateComponent} className="w-full">
+                Update Component
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* View Dialog */}
+      <Dialog open={isViewDialogOpen} onOpenChange={setIsViewDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Component Details</DialogTitle>
+          </DialogHeader>
+          {selectedComponent && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Name</Label>
+                  <p className="mt-1">{selectedComponent.name}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Ship</Label>
+                  <p className="mt-1">{selectedComponent.ship}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Type</Label>
+                  <p className="mt-1">{selectedComponent.type}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Status</Label>
+                  <p className="mt-1">{selectedComponent.status}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Health</Label>
+                  <p className="mt-1">{selectedComponent.health}%</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-500">Last Inspection</Label>
+                  <p className="mt-1">{selectedComponent.lastInspection}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
